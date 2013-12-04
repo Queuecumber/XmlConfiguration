@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("XmlConfiguration")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Library for loading xml based config files into .Net applications")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("XmlConfiguration")]
-[assembly: AssemblyCopyright("Copyright ©  2013")]
+[assembly: AssemblyCopyright("Copyright ©  2013 Max Ehrlich")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
