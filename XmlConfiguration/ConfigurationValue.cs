@@ -132,7 +132,9 @@ namespace XmlConfiguration
 			return Value;
 		}
 
-		/// <summary>
+        #region Implicit conversions to scalar types
+
+        /// <summary>
 		/// Implicit string conversion operator. Allows
 		/// a programmer to treat the configuration values
 		/// as first class data.
@@ -260,6 +262,10 @@ namespace XmlConfiguration
             }
         }
 
+        #endregion
+
+        #region Implicit conversions to enumerables
+
         public IEnumerable<T> AsEnumerable<T>()
         {
             string value = this;
@@ -267,18 +273,6 @@ namespace XmlConfiguration
             string[] parts = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             return parts.Select(s => (T)Convert.ChangeType(s.Trim(), typeof(T)));
-        }
-
-        public IDictionary<TKey, TValue> AsDictionary<TKey, TValue>()
-        {
-            string value = this;
-
-            var parts = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries));
-
-            Func<string, Type, object> convertString = (s, t) => Convert.ChangeType(s.Trim(), t);
-
-            return parts.ToDictionary(s => (TKey)convertString(s[0], typeof(TKey)),         // Key
-                                      s => (TValue)convertString(s[1], typeof(TValue)));    // Value
         }
 
         public static implicit operator ReadOnlyCollection<string>(ConfigurationValue val)
@@ -315,5 +309,58 @@ namespace XmlConfiguration
         {
             return val.AsEnumerable<DateTime>().ToList().AsReadOnly();
         }
-	}
+
+        #endregion
+
+        #region Implicit conversions to dictionaries
+
+        public IDictionary<TKey, TValue> AsDictionary<TKey, TValue>()
+        {
+            string value = this;
+
+            var parts = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries));
+
+            Func<string, Type, object> convertString = (s, t) => Convert.ChangeType(s.Trim(), t);
+
+            return parts.ToDictionary(s => (TKey)convertString(s[0], typeof(TKey)),         // Key
+                                      s => (TValue)convertString(s[1], typeof(TValue)));    // Value
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, string>(ConfigurationValue val)
+        {
+            return new ReadOnlyDictionary<string, string>(val.AsDictionary<string, string>());
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, short>(ConfigurationValue val)
+        {
+            return new ReadOnlyDictionary<string, short>(val.AsDictionary<string, short>());
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, int>(ConfigurationValue val)
+        {
+            return new ReadOnlyDictionary<string, int>(val.AsDictionary<string, int>());
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, long>(ConfigurationValue val)
+        {
+            return new ReadOnlyDictionary<string, long>(val.AsDictionary<string, long>());
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, float>(ConfigurationValue val)
+        {
+            return new ReadOnlyDictionary<string, float>(val.AsDictionary<string, float>());
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, double>(ConfigurationValue val)
+        {
+            return new ReadOnlyDictionary<string, double>(val.AsDictionary<string, double>());
+        }
+
+        public static implicit operator ReadOnlyDictionary<string, DateTime>(ConfigurationValue val)
+        {
+            return new ReadOnlyDictionary<string, DateTime>(val.AsDictionary<string, DateTime>());
+        } 
+
+        #endregion
+    }
 }
