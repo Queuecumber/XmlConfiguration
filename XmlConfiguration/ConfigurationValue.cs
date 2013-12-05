@@ -269,6 +269,18 @@ namespace XmlConfiguration
             return parts.Select(s => (T)Convert.ChangeType(s.Trim(), typeof(T)));
         }
 
+        public IDictionary<TKey, TValue> AsDictionary<TKey, TValue>()
+        {
+            string value = this;
+
+            var parts = value.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s.Split(new[] { ':' }, StringSplitOptions.RemoveEmptyEntries));
+
+            Func<string, Type, object> convertString = (s, t) => Convert.ChangeType(s.Trim(), t);
+
+            return parts.ToDictionary(s => (TKey)convertString(s[0], typeof(TKey)),         // Key
+                                      s => (TValue)convertString(s[1], typeof(TValue)));    // Value
+        }
+
         public static implicit operator ReadOnlyCollection<string>(ConfigurationValue val)
         {
             return val.AsEnumerable<string>().ToList().AsReadOnly();
